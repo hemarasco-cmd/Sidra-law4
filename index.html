@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مراقبة التربية والتعليم بلدية خليج السدرة - الاستعلام عن فروقات القانون 4</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f4f8f5;
+      color: #1e293b;
+    }
+    @media print {
+      body { background-color: #ffffff !important; }
+      .no-print { display: none !important; }
+      .print-only { display: flex !important; }
+      #statement-card {
+        box-shadow: none !important;
+        border: 2px solid #0b6b43 !important;
+        margin: 0 !important;
+        padding: 20px !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- 1. رأس الصفحة -->
+  <header class="bg-white border-t-4 border-[#0b6b43] shadow-sm no-print">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-14 h-14 rounded-2xl bg-[#eaf4ee] border border-[#cde5d6] flex items-center justify-center overflow-hidden shrink-0">
+          <img 
+            id="headerLogoImg"
+            src="logo.png" 
+            alt="شعار المراقبة" 
+            class="w-full h-full object-contain"
+            onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';"
+          />
+          <div id="fallback-logo" class="hidden items-center justify-center text-[#0b6b43]">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <p class="text-sm sm:text-base font-extrabold text-[#0b3d28]">وزارة التربية والتعليم</p>
+          <p class="text-xs sm:text-sm font-semibold text-slate-500">مراقبة التربية والتعليم بلدية خليج السدرة</p>
+        </div>
+      </div>
+
+      <button 
+        onclick="openAdminModal()"
+        class="flex items-center gap-1.5 bg-[#eaf4ee] hover:bg-[#d8ece0] text-[#0b6b43] px-3.5 py-2 rounded-xl text-xs font-extrabold border border-[#cde5d6] transition cursor-pointer"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        <span>دخول المسؤول</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. واجهة استعلام الموظف -->
+  <main id="public-view" class="max-w-xl w-full mx-auto px-4 py-8 sm:py-10">
+    <section class="text-center mb-8 no-print">
+      <div class="inline-flex items-center gap-2 bg-[#e3f1e8] text-[#0b6b43] px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold mb-5">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#0b6b43]"></span>
+        <span>بوابة الاستعلامات الإلكترونية</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-black text-[#0b3d28] leading-tight mb-2">وزارة التربية والتعليم</h1>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-[#126b46] leading-snug">مراقبة التربية والتعليم</h2>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-[#126b46] leading-snug mb-4">بلدية خليج السدرة</h2>
+
+      <div class="w-16 h-1.5 bg-[#198754] rounded-full mx-auto my-5"></div>
+
+      <h3 class="text-xl sm:text-2xl font-black text-[#0b3d28] mb-3">
+        رابط الاستعلام عن فروقات القانون 4
+      </h3>
+
+      <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-3">
+        استعلم عن بياناتك وإجمالي الأشهر والفروقات المالية المستحقة بخطوة واحدة، باستخدام رقمك الوطني.
+      </p>
+
+      <div class="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm text-slate-500 font-semibold">
+        <svg class="w-4 h-4 text-[#0b6b43]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        <span>تُعرض نتيجة الرقم الوطني المطابق فقط</span>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-[28px] shadow-sm border border-slate-200/90 p-6 sm:p-8 mb-8 no-print">
+      <div class="flex justify-start mb-4">
+        <div class="w-14 h-14 rounded-2xl bg-[#eaf4ee] flex items-center justify-center text-[#0b6b43]">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+          </svg>
+        </div>
+      </div>
+
+      <h4 class="text-2xl font-black text-[#0b3d28] mb-2">استعلم عن فروقاتك</h4>
+      <p class="text-slate-500 text-sm mb-6 leading-relaxed">
+        أدخل الرقم الوطني المكوّن من 12 رقماً، ثم اضغط على بحث لعرض بياناتك المسجلة.
+      </p>
+
+      <form onsubmit="handleEmployeeSearch(event)" class="space-y-5" novalidate>
+        <div>
+          <label for="nationalIdInput" class="block text-sm font-extrabold text-[#0b3d28] mb-2">
+            الرقم الوطني
+          </label>
+          <input
+            id="nationalIdInput"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="000000000000"
+            oninput="onNationalIdInput(this)"
+            class="w-full bg-[#f8faf9] border border-slate-300 focus:border-[#0b6b43] focus:ring-2 focus:ring-[#0b6b43]/20 rounded-2xl px-4 py-4 text-center text-xl tracking-[0.22em] font-bold text-slate-800 outline-none transition"
+          />
+          <div class="flex items-center justify-between text-xs text-slate-400 mt-2 px-1">
+            <span>يُقبل إدخال الأرقام العربية والإنجليزية</span>
+            <span id="digitCounter" dir="ltr">0 / 12</span>
+          </div>
+        </div>
+
+        <div id="searchMessage" class="hidden p-3.5 rounded-2xl text-sm font-bold border"></div>
+
+        <button
+          type="submit"
+          class="w-full bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold text-base py-4 px-6 rounded-2xl flex items-center justify-center gap-2.5 shadow-sm transition cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z" />
+          </svg>
+          <span>بحث عن المستحقات</span>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-400">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        <span>الاستعلام لا يتطلب تسجيل حساب أو إدخال كلمة مرور.</span>
+      </div>
+    </section>
+
+    <!-- بطاقة نتيجة الاستعلام -->
+    <section id="statement-card" class="hidden bg-white rounded-[28px] shadow-md border-2 border-[#0b6b43]/20 p-6 sm:p-8 mb-8">
+      <div class="hidden print-only items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <img id="printLogoImg" src="logo.png" alt="الشعار" class="w-16 h-16 object-contain" onerror="this.style.display='none'" />
+          <div>
+            <p class="text-xs font-bold text-slate-600">وزارة التربية والتعليم</p>
+            <h2 class="text-lg font-black text-slate-900">مراقبة التربية والتعليم – بلدية خليج السدرة</h2>
+            <p class="text-sm font-bold text-slate-700">بيان فروقات القانون رقم (4) لسنة 2018</p>
+          </div>
+        </div>
+        <div class="text-left text-xs text-slate-600">
+          <p id="printDate"></p>
+          <p class="font-bold text-[#0b6b43] mt-1">بيان استعلام إلكتروني</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-6">
+        <div>
+          <span class="text-xs font-bold text-[#0b6b43] bg-[#eaf4ee] px-3 py-1 rounded-full">بيان الفروقات المسجلة</span>
+          <h3 class="text-xl font-black text-[#0b3d28] mt-2">بيان الفروقات المالية</h3>
+        </div>
+        <div class="flex items-center gap-2 no-print">
+          <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-[#0b6b43] hover:bg-[#085233] text-white text-xs sm:text-sm font-bold transition cursor-pointer">
+            طباعة / حفظ PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#f8faf9] p-4 rounded-2xl border border-slate-200/80 mb-6 text-sm">
+        <div>
+          <span class="text-slate-400 text-xs block">اسم الموظف</span>
+          <span id="resName" class="font-extrabold text-slate-800 text-base"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 text-xs block">الرقم الوطني</span>
+          <span id="resNid" dir="ltr" class="font-bold text-slate-800"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 text-xs block">المدرسة / جهة العمل</span>
+          <span id="resSchool" class="font-bold text-slate-800"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 text-xs block">المسمى الوظيفي / الدرجة</span>
+          <span id="resGrade" class="font-bold text-slate-800"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 text-xs block">الرقم المالي / الوظيفي</span>
+          <span id="resFinNum" class="font-bold text-slate-800"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 text-xs block">حالة السجل</span>
+          <span id="resStatus" class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 mt-0.5"></span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
+        <table class="w-full text-right text-sm">
+          <thead class="bg-[#eaf4ee] text-[#0b3d28] font-extrabold border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4">البيان / الفترة</th>
+              <th class="py-3 px-4">عدد الأشهر المستحقة</th>
+              <th class="py-3 px-4">قيمة الفرق الشهري</th>
+              <th class="py-3 px-4">إجمالي الفروقات (د.ل)</th>
+            </tr>
+          </thead>
+          <tbody id="resTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#eaf4ee]/80 border border-[#cde5d6] rounded-2xl p-4 mb-4">
+        <div>
+          <span class="text-xs text-slate-600 block">إجمالي عدد الأشهر المحتسبة</span>
+          <span id="resTotalMonths" class="text-lg font-black text-[#0b3d28]"></span>
+        </div>
+        <div>
+          <span class="text-xs text-slate-600 block">إجمالي المبلغ المستحق بالدينار الليبي</span>
+          <span id="resTotalAmount" class="text-xl font-black text-[#0b6b43]"></span>
+        </div>
+      </div>
+
+      <div id="resNotesBox" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 font-semibold mb-3"></div>
+
+      <p class="text-xs text-slate-500 border-t border-slate-200 pt-3">
+        تخضع البيانات المعروضة للسجلات المتاحة والمراجعة والاعتماد من مراقبة التربية والتعليم – بلدية خليج السدرة.
+      </p>
+    </section>
+
+    <section class="grid grid-cols-3 gap-3 sm:gap-6 pt-6 border-t border-slate-200/80 text-center no-print">
+      <div class="flex flex-col items-center">
+        <span class="w-10 h-10 rounded-xl bg-[#e3f1e8] text-[#0b6b43] font-extrabold text-sm flex items-center justify-center mb-2">01</span>
+        <h5 class="font-extrabold text-xs sm:text-sm text-[#0b3d28] mb-1">أدخل الرقم الوطني</h5>
+        <p class="text-[11px] sm:text-xs text-slate-500">تأكد من كتابة الأرقام الاثني عشر كاملة.</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="w-10 h-10 rounded-xl bg-[#e3f1e8] text-[#0b6b43] font-extrabold text-sm flex items-center justify-center mb-2">02</span>
+        <h5 class="font-extrabold text-xs sm:text-sm text-[#0b3d28] mb-1">اضغط على بحث</h5>
+        <p class="text-[11px] sm:text-xs text-slate-500">تتم مطابقة الرقم مع البيانات المسجلة.</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="w-10 h-10 rounded-xl bg-[#e3f1e8] text-[#0b6b43] font-extrabold text-sm flex items-center justify-center mb-2">03</span>
+        <h5 class="font-extrabold text-xs sm:text-sm text-[#0b3d28] mb-1">اطّلع على بياناتك</h5>
+        <p class="text-[11px] sm:text-xs text-slate-500">تظهر بيانات الموظف والأشهر المستحقة.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 3. لوحة تحكم المسؤول -->
+  <section id="admin-panel" class="hidden max-w-6xl w-full mx-auto px-4 py-8 no-print space-y-6">
+    <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <span class="text-xs font-bold bg-[#eaf4ee] text-[#0b6b43] px-3 py-1 rounded-full">لوحة الإدارة وإدخال البيانات</span>
+        <h2 class="text-xl font-black text-[#0b3d28] mt-1">إدارة بيانات موظفي مراقبة التربية والتعليم – خليج السدرة</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="bg-[#eaf4ee] hover:bg-[#d8ece0] text-[#0b6b43] text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer transition">
+          <span>رفع شعار المراقبة من الهاتف</span>
+          <input type="file" accept="image/*" onchange="uploadLogoFromPhone(event)" class="hidden" />
+        </label>
+        <button onclick="closeAdminPanel()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition cursor-pointer">
+          العودة لواجهة الاستعلام
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-1 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 h-fit">
+        <h3 id="formTitle" class="text-lg font-black text-[#0b3d28] mb-4 border-b border-slate-100 pb-3">
+          إضافة موظف جديد
+        </h3>
+        <form id="employeeForm" onsubmit="saveEmployee(event)" class="space-y-3.5 text-sm">
+          <input type="hidden" id="editIndex" value="-1" />
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">اسم الموظف رباعياً *</label>
+            <input id="empName" type="text" required placeholder="مثال: سالم عبد القادر محمد" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none focus:border-[#0b6b43]" />
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">الرقم الوطني (12 رقماً) *</label>
+            <input id="empNid" type="text" inputmode="numeric" required maxlength="12" placeholder="119850123456" oninput="this.value = normalizeDigits(this.value)" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 text-left font-bold outline-none focus:border-[#0b6b43]" dir="ltr" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">المدرسة / جهة العمل</label>
+              <input id="empSchool" type="text" placeholder="مدرسة خليج السدرة" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3 py-2 outline-none focus:border-[#0b6b43]" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">الدرجة / الصفة</label>
+              <input id="empGrade" type="text" placeholder="الدرجة العاشرة" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3 py-2 outline-none focus:border-[#0b6b43]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">الرقم المالي (اختياري)</label>
+              <input id="empFin" type="text" placeholder="مثال: 88412" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3 py-2 outline-none focus:border-[#0b6b43]" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">الفترة / السنوات</label>
+              <input id="empPeriod" type="text" value="فروقات القانون رقم (4)" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3 py-2 outline-none focus:border-[#0b6b43]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 bg-[#eaf4ee]/60 p-3 rounded-2xl border border-[#cde5d6]">
+            <div>
+              <label class="block font-extrabold text-[#0b3d28] mb-1">عدد الأشهر *</label>
+              <input id="empMonths" type="number" min="1" max="200" required placeholder="12" oninput="calcPreviewTotal()" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 font-bold outline-none focus:border-[#0b6b43]" />
+            </div>
+            <div>
+              <label class="block font-extrabold text-[#0b3d28] mb-1">الفرق الشهري (د.ل) *</label>
+              <input id="empMonthlyDiff" type="number" step="0.001" min="0" required placeholder="425.500" oninput="calcPreviewTotal()" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 font-bold outline-none focus:border-[#0b6b43]" />
+            </div>
+            <div class="col-span-2 pt-1 flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-600">الإجمالي المحسوب تلقائياً:</span>
+              <span id="calcTotalPreview" class="font-black text-sm text-[#0b6b43]">0.000 دينار ليبي</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">أو إدخال الإجمالي النهائي مباشرةً (د.ل)</label>
+            <input id="empCustomTotal" type="number" step="0.001" min="0" placeholder="اتركه فارغاً ليُحسب من (الأشهر × الفرق الشهري)" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2 text-xs outline-none focus:border-[#0b6b43]" />
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">حالة السجل</label>
+            <select id="empStatus" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 font-bold outline-none focus:border-[#0b6b43]">
+              <option value="معتمد ومسجل">معتمد ومسجل</option>
+              <option value="قيد المراجعة والتدقيق">قيد المراجعة والتدقيق</option>
+              <option value="توجد بيانات تحتاج إلى مراجعة">توجد بيانات تحتاج إلى مراجعة</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">ملاحظات للموظف (اختياري)</label>
+            <input id="empNotes" type="text" placeholder="تظهر للموظف أسفل البيان..." class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2 outline-none focus:border-[#0b6b43]" />
+          </div>
+
+          <div class="flex gap-2 pt-2">
+            <button type="submit" class="flex-1 bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold py-3 rounded-xl transition cursor-pointer">
+              حفظ بيانات الموظف
+            </button>
+            <button type="button" onclick="resetEmployeeForm()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl transition cursor-pointer">
+              إلغاء
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <h3 class="text-base font-black text-[#0b3d28]">استيراد كشف Excel دفعة واحدة أو حفظ البيانات</h3>
+              <p class="text-xs text-slate-500">يمكنك رفع ملف Excel يحتوي على الموظفين أو تحميل قالب جاهز للتعبئة.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <label class="bg-[#0b6b43] hover:bg-[#085233] text-white text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer transition">
+                <span>رفع ملف Excel / CSV</span>
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcelFile(event)" class="hidden" />
+              </label>
+              <button onclick="downloadExcelTemplate()" class="bg-[#eaf4ee] hover:bg-[#d8ece0] text-[#0b6b43] text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer">
+                تحميل قالب Excel فارغ
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3 flex items-center justify-between gap-2">
+            <input 
+              type="text" 
+              id="adminSearchInput" 
+              oninput="renderAdminTable()" 
+              placeholder="ابحث بالاسم أو الرقم الوطني داخل الكشف..." 
+              class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-4 py-2 text-xs outline-none focus:border-[#0b6b43]"
+            />
+            <span id="totalEmployeesBadge" class="shrink-0 bg-slate-100 text-slate-700 font-extrabold text-xs px-3 py-2 rounded-xl"></span>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-200 max-h-96">
+            <table class="w-full text-right text-xs sm:text-sm">
+              <thead class="bg-[#eaf4ee] text-[#0b3d28] font-extrabold sticky top-0">
+                <tr>
+                  <th class="p-3">الاسم</th>
+                  <th class="p-3">الرقم الوطني</th>
+                  <th class="p-3">الأشهر</th>
+                  <th class="p-3">الإجمالي (د.ل)</th>
+                  <th class="p-3">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="adminEmployeesTable" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h3 class="text-base font-black text-[#0b3d28] mb-1">تغيير الرمز السري للمسؤول</h3>
+            <p class="text-xs text-slate-500 mb-4">الرمز الافتراضي الحالي هو <code class="font-bold text-[#0b6b43]">2026</code> ويمكنك تغييره من هنا:</p>
+            <form onsubmit="changeAdminPin(event)" class="space-y-3 text-xs">
+              <input id="currentPinInput" type="password" required placeholder="أدخل الرمز السري الحالي" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none" />
+              <input id="newPinInput" type="password" required placeholder="أدخل الرمز السري الجديد" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none" />
+              <button type="submit" class="w-full bg-[#0b3d28] hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">
+                حفظ الرمز السري الجديد
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
+            <div>
+              <h3 class="text-base font-black text-[#0b3d28] mb-1">نشر التعديلات لجميع الهواتف (GitHub)</h3>
+              <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                التعديلات تُحفظ فوراً على جهازك، ولتظهر لجميع الموظفين الذين يفتحون رابط GitHub من هواتفهم، اضغط أدناه لنسخ الكود المحدّث أو تحميله:
+              </p>
+            </div>
+            <div class="space-y-2">
+              <button onclick="copyUpdatedHtmlToClipboard()" class="w-full bg-[#0b3d28] hover:bg-slate-800 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">
+                نسخ الكود المحدّث بالكامل للحافظة (للصقه في GitHub)
+              </button>
+              <button onclick="exportUpdatedSiteHtml()" class="w-full bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">
+                تحميل ملف الموقع المحدّث (index.html)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. نافذة الرمز السري -->
+  <div id="admin-login-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-xl border border-slate-200 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-[#eaf4ee] text-[#0b6b43] flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-black text-[#0b3d28] mb-1">دخول المسؤول</h3>
+      <p class="text-xs text-slate-500 mb-4">أدخل الرمز السري لإضافة وتعديل بيانات الموظفين</p>
+      
+      <form onsubmit="verifyAdminPin(event)" class="space-y-3">
+        <input 
+          id="adminPinField" 
+          type="password" 
+          placeholder="الرمز السري (الافتراضي: 2026)" 
+          class="w-full bg-[#f8faf9] border border-slate-300 focus:border-[#0b6b43] rounded-xl px-4 py-3 text-center font-bold outline-none"
+        />
+        <p id="pinErrorMsg" class="hidden text-xs text-red-600 font-bold">الرمز السري غير صحيح!</p>
+        <div class="flex gap-2 pt-1">
+          <button type="submit" class="flex-1 bg-[#0b6b43] hover:bg-[#085233] text-white font-bold py-2.5 rounded-xl text-sm cursor-pointer">
+            دخول
+          </button>
+          <button type="button" onclick="closeAdminModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-sm cursor-pointer">
+            إغلاق
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. التذييل -->
+  <footer class="border-t border-slate-200/80 bg-white py-5 text-center text-xs text-slate-400 no-print mt-8">
+    <p class="font-semibold text-slate-500 mb-1">
+      مراقبة التربية والتعليم بلدية خليج السدرة · خدمات شؤون الموظفين
+    </p>
+    <p>الاستعلام عن فروقات القانون 4</p>
+  </footer>
+
+  <!-- 6. البيانات المدمجة -->
+  <script id="embedded-data-script">
+    let EMBEDDED_ADMIN_PIN = "2026";
+    let EMBEDDED_LOGO_DATA = "";
+    let EMBEDDED_EMPLOYEES = [
+      {
+        name: "سالم عبد القادر محمد الزروق",
+        nid: "119850123456",
+        school: "مدرسة خليج السدرة الثانوية",
+        grade: "الدرجة العاشرة",
+        fin: "88412",
+        period: "فروقات القانون رقم (4) لسنة 2018",
+        months: 25,
+        monthlyDiff: 425.500,
+        total: 10637.500,
+        status: "معتمد ومسجل",
+        notes: ""
+      },
+      {
+        name: "فاطمة مفتاح علي العبيدي",
+        nid: "219900654321",
+        school: "مدرسة بن جواد المركزية للتعليم الأساسي",
+        grade: "الدرجة الثامنة",
+        fin: "99201",
+        period: "فروقات القانون رقم (4) لسنة 2018",
+        months: 20,
+        monthlyDiff: 380.250,
+        total: 7605.000,
+        status: "قيد المراجعة والتدقيق",
+        notes: "يرجى مراجعة قسم الشؤون الإدارية والمالية لاستكمال المطابقة."
+      }
+    ];
+  </script>
+
+  <script>
+    const STORAGE_KEY_EMP = "sidra_law4_employees_v1";
+    const STORAGE_KEY_PIN = "sidra_law4_admin_pin_v1";
+    const STORAGE_KEY_LOGO = "sidra_law4_logo_v1";
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLogo = localStorage.getItem(STORAGE_KEY_LOGO) || EMBEDDED_LOGO_DATA;
+      if (savedLogo) applyLogoData(savedLogo);
+    });
+
+    function applyLogoData(dataUrl) {
+      const hImg = document.getElementById('headerLogoImg');
+      const pImg = document.getElementById('printLogoImg');
+      const fb = document.getElementById('fallback-logo');
+      if (hImg) { hImg.src = dataUrl; hImg.style.display = 'block'; }
+      if (pImg) { pImg.src = dataUrl; pImg.style.display = 'block'; }
+      if (fb) { fb.style.display = 'none'; }
+    }
+
+    function uploadLogoFromPhone(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        EMBEDDED_LOGO_DATA = dataUrl;
+        localStorage.setItem(STORAGE_KEY_LOGO, dataUrl);
+        applyLogoData(dataUrl);
+        alert("تم تحديث شعار المراقبة بنجاح!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function getEmployees() {
+      const saved = localStorage.getItem(STORAGE_KEY_EMP);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+      return EMBEDDED_EMPLOYEES;
+    }
+
+    function saveEmployeesData(list) {
+      EMBEDDED_EMPLOYEES = list;
+      localStorage.setItem(STORAGE_KEY_EMP, JSON.stringify(list));
+    }
+
+    function getAdminPin() {
+      return localStorage.getItem(STORAGE_KEY_PIN) || EMBEDDED_ADMIN_PIN;
+    }
+
+    function normalizeDigits(str) {
+      if (!str) return "";
+      const map = {
+        '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9',
+        '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9'
+      };
+      return String(str).split('').map(c => map[c] ?? c).join('').replace(/[^0-9]/g, '').slice(0, 12);
+    }
+
+    function formatLYD(val) {
+      const num = Number(val) || 0;
+      return num.toLocaleString('ar-LY', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + " دينار ليبي";
+    }
+
+    function onNationalIdInput(input) {
+      input.value = normalizeDigits(input.value);
+      const count = input.value.length;
+      const counter = document.getElementById('digitCounter');
+      counter.textContent = count + " / 12";
+      counter.className = count === 12 ? "text-[#0b6b43] font-extrabold" : "text-slate-400";
+      document.getElementById('searchMessage').classList.add('hidden');
+    }
+
+    function handleEmployeeSearch(e) {
+      e.preventDefault();
+      const nid = normalizeDigits(document.getElementById('nationalIdInput').value);
+      const card = document.getElementById('statement-card');
+      card.classList.add('hidden');
+
+      if (nid.length !== 12) {
+        showStatus("الرقم الوطني غير مكتمل. يرجى إدخال 12 رقماً بالضبط.", "error");
+        return;
+      }
+
+      const list = getEmployees();
+      const found = list.find(emp => normalizeDigits(emp.nid) === nid);
+
+      if (!found) {
+        showStatus("لم يتم العثور على سجل مطابق لهذا الرقم الوطني.", "error");
+        return;
+      }
+
+      showStatus("تم العثور على البيانات المسجلة بنجاح.", "success");
+
+      document.getElementById('resName').textContent = found.name;
+      document.getElementById('resNid').textContent = found.nid;
+      document.getElementById('resSchool').textContent = found.school || "مراقبة التربية والتعليم – بلدية خليج السدرة";
+      document.getElementById('resGrade').textContent = found.grade || "غير محدد";
+      document.getElementById('resFinNum').textContent = found.fin || "—";
+      document.getElementById('resStatus').textContent = found.status || "معتمد ومسجل";
+      document.getElementById('printDate').textContent = "تاريخ الاستخراج: " + new Date().toLocaleDateString('ar-LY');
+
+      const total = Number(found.total) || (Number(found.months) * Number(found.monthlyDiff));
+
+      document.getElementById('resTableBody').innerHTML = `
+        <tr>
+          <td class="py-3.5 px-4 font-bold">${found.period || 'فروقات القانون رقم (4) لسنة 2018'}</td>
+          <td class="py-3.5 px-4 font-bold">${found.months} شهراً</td>
+          <td class="py-3.5 px-4 font-semibold">${formatLYD(found.monthlyDiff)}</td>
+          <td class="py-3.5 px-4 font-extrabold text-[#0b6b43]">${formatLYD(total)}</td>
+        </tr>
+      `;
+
+      document.getElementById('resTotalMonths').textContent = found.months + " شهراً";
+      document.getElementById('resTotalAmount').textContent = formatLYD(total);
+
+      const notesBox = document.getElementById('resNotesBox');
+      if (found.notes && found.notes.trim() !== "") {
+        notesBox.textContent = "ملاحظة: " + found.notes;
+        notesBox.classList.remove('hidden');
+      } else {
+        notesBox.classList.add('hidden');
+      }
+
+      card.classList.remove('hidden');
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showStatus(text, type) {
+      const msgBox = document.getElementById('searchMessage');
+      msgBox.textContent = text;
+      msgBox.className = "p-3.5 rounded-2xl text-sm font-bold border " + (
+        type === "error"
+          ? "bg-red-50 text-red-800 border-red-200"
+          : "bg-emerald-50 text-emerald-800 border-emerald-200"
+      );
+      msgBox.classList.remove('hidden');
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminPinField').value = "";
+      document.getElementById('pinErrorMsg').classList.add('hidden');
+      document.getElementById('admin-login-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('adminPinField').focus(), 100);
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-login-modal').classList.add('hidden');
+    }
+
+    function verifyAdminPin(e) {
+      e.preventDefault();
+      const entered = document.getElementById('adminPinField').value.trim();
+      if (entered === getAdminPin()) {
+        closeAdminModal();
+        document.getElementById('public-view').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        renderAdminTable();
+      } else {
+        document.getElementById('pinErrorMsg').classList.remove('hidden');
+      }
+    }
+
+    function closeAdminPanel() {
+      document.getElementById('admin-panel').classList.add('hidden');
+      document.getElementById('public-view').classList.remove('hidden');
+    }
+
+    function calcPreviewTotal() {
+      const m = Number(document.getElementById('empMonths').value) || 0;
+      const diff = Number(document.getElementById('empMonthlyDiff').value) || 0;
+      document.getElementById('calcTotalPreview').textContent = formatLYD(m * diff);
+    }
+
+    function saveEmployee(e) {
+      e.preventDefault();
+      const nid = normalizeDigits(document.getElementById('empNid').value);
+      if (nid.length !== 12) {
+        alert("يرجى إدخال رقم وطني صحيح مكوّن من 12 رقماً.");
+        return;
+      }
+
+      const months = Number(document.getElementById('empMonths').value) || 0;
+      const monthlyDiff = Number(document.getElementById('empMonthlyDiff').value) || 0;
+      const customTotal = document.getElementById('empCustomTotal').value;
+      const total = customTotal !== "" ? Number(customTotal) : (months * monthlyDiff);
+
+      const empObj = {
+        name: document.getElementById('empName').value.trim(),
+        nid: nid,
+        school: document.getElementById('empSchool').value.trim() || "مراقبة التربية والتعليم – بلدية خليج السدرة",
+        grade: document.getElementById('empGrade').value.trim(),
+        fin: document.getElementById('empFin').value.trim(),
+        period: document.getElementById('empPeriod').value.trim() || "فروقات القانون رقم (4)",
+        months: months,
+        monthlyDiff: monthlyDiff,
+        total: Number(total.toFixed(3)),
+        status: document.getElementById('empStatus').value,
+        notes: document.getElementById('empNotes').value.trim()
+      };
+
+      const list = getEmployees();
+      const editIdx = Number(document.getElementById('editIndex').value);
+
+      if (editIdx >= 0) {
+        list[editIdx] = empObj;
+      } else {
+        const existingIdx = list.findIndex(item => item.nid === nid);
+        if (existingIdx >= 0) {
+          if (!confirm("هذا الرقم الوطني موجود مسبقاً. هل تريد تحديث بياناته؟")) return;
+          list[existingIdx] = empObj;
+        } else {
+          list.unshift(empObj);
+        }
+      }
+
+      saveEmployeesData(list);
+      resetEmployeeForm();
+      renderAdminTable();
+      alert("تم حفظ بيانات الموظف بنجاح!");
+    }
+
+    function resetEmployeeForm() {
+      document.getElementById('employeeForm').reset();
+      document.getElementById('editIndex').value = "-1";
+      document.getElementById('formTitle').textContent = "إضافة موظف جديد";
+      document.getElementById('calcTotalPreview').textContent = "0.000 دينار ليبي";
+    }
+
+    function editEmployee(index) {
+      const emp = getEmployees()[index];
+      if (!emp) return;
+      document.getElementById('editIndex').value = index;
+      document.getElementById('formTitle').textContent = "تعديل بيانات الموظف";
+      document.getElementById('empName').value = emp.name;
+      document.getElementById('empNid').value = emp.nid;
+      document.getElementById('empSchool').value = emp.school || "";
+      document.getElementById('empGrade').value = emp.grade || "";
+      document.getElementById('empFin').value = emp.fin || "";
+      document.getElementById('empPeriod').value = emp.period || "فروقات القانون رقم (4)";
+      document.getElementById('empMonths').value = emp.months;
+      document.getElementById('empMonthlyDiff').value = emp.monthlyDiff;
+      document.getElementById('empCustomTotal').value = emp.total;
+      document.getElementById('empStatus').value = emp.status || "معتمد ومسجل";
+      document.getElementById('empNotes').value = emp.notes || "";
+      calcPreviewTotal();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteEmployee(index) {
+      const list = getEmployees();
+      if (!confirm(`هل أنت متأكد من حذف سجل الموظف: ${list[index].name}؟`)) return;
+      list.splice(index, 1);
+      saveEmployeesData(list);
+      renderAdminTable();
+    }
+
+    function renderAdminTable() {
+      const list = getEmployees();
+      const query = (document.getElementById('adminSearchInput').value || "").trim();
+      const tbody = document.getElementById('adminEmployeesTable');
+      document.getElementById('totalEmployeesBadge').textContent = `الإجمالي: ${list.length} موظف`;
+
+      const filtered = list
+        .map((emp, idx) => ({ ...emp, originalIndex: idx }))
+        .filter(emp => emp.name.includes(query) || emp.nid.includes(query));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-bold">لا توجد سجلات مطابقة</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(emp => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-bold text-slate-800">${emp.name}</td>
+          <td class="p-3 font-mono text-xs" dir="ltr">${emp.nid}</td>
+          <td class="p-3">${emp.months}</td>
+          <td class="p-3 font-extrabold text-[#0b6b43]">${formatLYD(emp.total)}</td>
+          <td class="p-3 flex items-center gap-2">
+            <button onclick="editEmployee(${emp.originalIndex})" class="text-xs font-bold text-blue-700 hover:underline cursor-pointer">تعديل</button>
+            <button onclick="deleteEmployee(${emp.originalIndex})" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">حذف</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function changeAdminPin(e) {
+      e.preventDefault();
+      const curr = document.getElementById('currentPinInput').value.trim();
+      const next = document.getElementById('newPinInput').value.trim();
+
+      if (curr !== getAdminPin()) {
+        alert("الرمز السري الحالي غير صحيح!");
+        return;
+      }
+      if (next.length < 4) {
+        alert("يجب أن يتكون الرمز الجديد من 4 خانات على الأقل.");
+        return;
+      }
+
+      EMBEDDED_ADMIN_PIN = next;
+      localStorage.setItem(STORAGE_KEY_PIN, next);
+      document.getElementById('currentPinInput').value = "";
+      document.getElementById('newPinInput').value = "";
+      alert("تم تغيير الرمز السري للمسؤول بنجاح!");
+    }
+
+    function importExcelFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet);
+
+        const list = getEmployees();
+        let added = 0;
+
+        rows.forEach(row => {
+          const nid = normalizeDigits(row['الرقم الوطني'] || row['national_id'] || '');
+          const name = String(row['اسم الموظف'] || row['الاسم'] || row['full_name'] || '').trim();
+          if (nid.length === 12 && name) {
+            const months = Number(row['عدد الأشهر'] || row['الأشهر'] || 12);
+            const monthlyDiff = Number(row['الفرق الشهري'] || row['قيمة الفرق الشهري'] || 0);
+            const total = Number(row['الإجمالي'] || (months * monthlyDiff));
+
+            const empObj = {
+              name,
+              nid,
+              school: String(row['المدرسة'] || row['جهة العمل'] || 'مراقبة التربية والتعليم – بلدية خليج السدرة'),
+              grade: String(row['الدرجة'] || row['المسمى الوظيفي'] || ''),
+              fin: String(row['الرقم المالي'] || ''),
+              period: String(row['الفترة'] || 'فروقات القانون رقم (4) لسنة 2018'),
+              months,
+              monthlyDiff,
+              total: Number(total.toFixed(3)),
+              status: String(row['الحالة'] || 'معتمد ومسجل'),
+              notes: String(row['ملاحظات'] || '')
+            };
+
+            const existingIdx = list.findIndex(item => item.nid === nid);
+            if (existingIdx >= 0) list[existingIdx] = empObj;
+            else list.push(empObj);
+            added++;
+          }
+        });
+
+        saveEmployeesData(list);
+        renderAdminTable();
+        alert(`تم استيراد وتحديث ${added} موظف بنجاح!`);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function downloadExcelTemplate() {
+      const sample = [
+        {
+          "اسم الموظف": "سالم عبد القادر محمد الزروق",
+          "الرقم الوطني": "119850123456",
+          "المدرسة": "مدرسة خليج السدرة الثانوية",
+          "الدرجة": "الدرجة العاشرة",
+          "الرقم المالي": "88412",
+          "عدد الأشهر": 12,
+          "الفرق الشهري": 425.500,
+          "الإجمالي": 5106.000,
+          "الحالة": "معتمد ومسجل",
+          "ملاحظات": ""
+        }
+      ];
+      const ws = XLSX.utils.json_to_sheet(sample);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "كشف الفروقات");
+      XLSX.writeFile(wb, "قالب_فروقات_خليج_السدرة.xlsx");
+    }
+
+    function buildUpdatedHtmlString() {
+      const currentList = getEmployees();
+      const currentPin = getAdminPin();
+      const currentLogo = localStorage.getItem(STORAGE_KEY_LOGO) || EMBEDDED_LOGO_DATA || "";
+
+      const scriptContent = `\n    let EMBEDDED_ADMIN_PIN = ${JSON.stringify(currentPin)};\n    let EMBEDDED_LOGO_DATA = ${JSON.stringify(currentLogo)};\n    let EMBEDDED_EMPLOYEES = ${JSON.stringify(currentList, null, 2)};\n  `;
+      const docClone = document.documentElement.cloneNode(true);
+      const embeddedScript = docClone.querySelector('#embedded-data-script');
+      embeddedScript.textContent = scriptContent;
+
+      docClone.querySelector('#admin-panel').classList.add('hidden');
+      docClone.querySelector('#public-view').classList.remove('hidden');
+      docClone.querySelector('#statement-card').classList.add('hidden');
+
+      return "<!DOCTYPE html>\n" + docClone.outerHTML;
+    }
+
+    function copyUpdatedHtmlToClipboard() {
+      const finalHtml = buildUpdatedHtmlString();
+      navigator.clipboard.writeText(finalHtml).then(() => {
+        alert("تم نسخ كود الموقع المحدّث بالكامل! يمكنك الآن لصقه مباشرة في ملف index.html داخل GitHub.");
+      });
+    }
+
+    function exportUpdatedSiteHtml() {
+      const finalHtml = buildUpdatedHtmlString();
+      const blob = new Blob([finalHtml], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "index.html";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
