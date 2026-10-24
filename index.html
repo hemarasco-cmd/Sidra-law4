@@ -16,6 +16,7 @@
       font-family: 'Cairo', sans-serif;
       background-color: #f4f8f5;
       color: #1e293b;
+      user-select: none;
     }
     @media print {
       body { background-color: #ffffff !important; }
@@ -32,24 +33,26 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- 1. رأس الصفحة -->
+  <!-- ==================== 1. رأس الصفحة ==================== -->
   <header class="bg-white border-t-4 border-[#0b6b43] shadow-sm no-print">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-14 h-14 rounded-2xl bg-[#eaf4ee] border border-[#cde5d6] flex items-center justify-center overflow-hidden shrink-0">
-          <img 
-            id="headerLogoImg"
-            src="logo.png" 
-            alt="شعار المراقبة" 
-            class="w-full h-full object-contain"
-            onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';"
-          />
-          <div id="fallback-logo" class="hidden items-center justify-center text-[#0b6b43]">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-            </svg>
-          </div>
+        <!-- عند الضغط 3 مرات على الشعار أو زر دخول المسؤول تفتح لوحة التحكم -->
+        <div 
+          onclick="handleLogoSecretTap()"
+          class="w-14 h-14 rounded-2xl bg-white border border-[#cde5d6] flex items-center justify-center overflow-hidden shrink-0 cursor-pointer shadow-xs"
+          title="شعار مراقبة التربية والتعليم خليج السدرة"
+        >
+          <img id="headerLogoImg" src="" alt="شعار المراقبة" class="hidden w-full h-full object-contain p-0.5" />
+          <!-- شعار فيكتور مطابق للشعار الرسمي يظهر تلقائياً إلى حين رفع الصورة من الهاتف -->
+          <svg id="defaultVectorLogo" class="w-12 h-12" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="60" r="54" stroke="#2b6cb0" stroke-width="3" stroke-dasharray="6 4"/>
+            <path d="M30 45 L60 55 L90 45 L90 82 L60 92 L30 82 Z" fill="#ebf8ff" stroke="#2b6cb0" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M60 55 L60 92" stroke="#2b6cb0" stroke-width="3"/>
+            <polygon points="60,36 38,46 60,56 82,46" fill="#1a202c"/>
+            <rect x="50" y="53" width="20" height="9" rx="2" fill="#2d3748"/>
+            <path d="M42 48 L42 62" stroke="#1a202c" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
         </div>
         <div>
           <p class="text-sm sm:text-base font-extrabold text-[#0b3d28]">وزارة التربية والتعليم</p>
@@ -69,11 +72,11 @@
     </div>
   </header>
 
-  <!-- 2. واجهة استعلام الموظف -->
+  <!-- ==================== 2. واجهة الموظف (الاستعلام) ==================== -->
   <main id="public-view" class="max-w-xl w-full mx-auto px-4 py-8 sm:py-10">
     <section class="text-center mb-8 no-print">
       <div class="inline-flex items-center gap-2 bg-[#e3f1e8] text-[#0b6b43] px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold mb-5">
-        <span class="w-2.5 h-2.5 rounded-full bg-[#0b6b43]"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-[#0b6b43] animate-pulse"></span>
         <span>بوابة الاستعلامات الإلكترونية</span>
       </div>
 
@@ -99,6 +102,7 @@
       </div>
     </section>
 
+    <!-- بطاقة الاستعلام -->
     <section class="bg-white rounded-[28px] shadow-sm border border-slate-200/90 p-6 sm:p-8 mb-8 no-print">
       <div class="flex justify-start mb-4">
         <div class="w-14 h-14 rounded-2xl bg-[#eaf4ee] flex items-center justify-center text-[#0b6b43]">
@@ -136,13 +140,14 @@
         <div id="searchMessage" class="hidden p-3.5 rounded-2xl text-sm font-bold border"></div>
 
         <button
+          id="searchBtn"
           type="submit"
           class="w-full bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold text-base py-4 px-6 rounded-2xl flex items-center justify-center gap-2.5 shadow-sm transition cursor-pointer"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z" />
           </svg>
-          <span>بحث عن المستحقات</span>
+          <span id="searchBtnText">بحث عن المستحقات</span>
         </button>
       </form>
 
@@ -158,7 +163,7 @@
     <section id="statement-card" class="hidden bg-white rounded-[28px] shadow-md border-2 border-[#0b6b43]/20 p-6 sm:p-8 mb-8">
       <div class="hidden print-only items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
         <div class="flex items-center gap-3">
-          <img id="printLogoImg" src="logo.png" alt="الشعار" class="w-16 h-16 object-contain" onerror="this.style.display='none'" />
+          <img id="printLogoImg" src="" alt="الشعار" class="hidden w-16 h-16 object-contain" />
           <div>
             <p class="text-xs font-bold text-slate-600">وزارة التربية والتعليم</p>
             <h2 class="text-lg font-black text-slate-900">مراقبة التربية والتعليم – بلدية خليج السدرة</h2>
@@ -261,17 +266,22 @@
     </section>
   </main>
 
-  <!-- 3. لوحة تحكم المسؤول -->
+  <!-- ==================== 3. لوحة تحكم المسؤول السحابية الفورية ==================== -->
   <section id="admin-panel" class="hidden max-w-6xl w-full mx-auto px-4 py-8 no-print space-y-6">
     <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
       <div>
-        <span class="text-xs font-bold bg-[#eaf4ee] text-[#0b6b43] px-3 py-1 rounded-full">لوحة الإدارة وإدخال البيانات</span>
-        <h2 class="text-xl font-black text-[#0b3d28] mt-1">إدارة بيانات موظفي مراقبة التربية والتعليم – خليج السدرة</h2>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold bg-[#eaf4ee] text-[#0b6b43] px-3 py-1 rounded-full">لوحة الإدارة السحابية المباشرة</span>
+          <span id="cloudSyncIndicator" class="text-xs font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+            ☁️ متصل بالسحابة (الحفظ فوري وتلقائي)
+          </span>
+        </div>
+        <h2 class="text-xl font-black text-[#0b3d28] mt-2">إدارة بيانات موظفي مراقبة التربية والتعليم – خليج السدرة</h2>
       </div>
-      <div class="flex items-center gap-2">
-        <label class="bg-[#eaf4ee] hover:bg-[#d8ece0] text-[#0b6b43] text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer transition">
-          <span>رفع شعار المراقبة من الهاتف</span>
-          <input type="file" accept="image/*" onchange="uploadLogoFromPhone(event)" class="hidden" />
+      <div class="flex flex-wrap items-center gap-2">
+        <label class="bg-[#eaf4ee] hover:bg-[#d8ece0] text-[#0b6b43] text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer transition border border-[#cde5d6]">
+          <span>📷 رفع شعار المراقبة من الهاتف</span>
+          <input type="file" accept="image/*" onchange="uploadLogoToCloud(event)" class="hidden" />
         </label>
         <button onclick="closeAdminPanel()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition cursor-pointer">
           العودة لواجهة الاستعلام
@@ -280,11 +290,12 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- نموذج إضافة أو تعديل موظف مباشر -->
       <div class="lg:col-span-1 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 h-fit">
         <h3 id="formTitle" class="text-lg font-black text-[#0b3d28] mb-4 border-b border-slate-100 pb-3">
-          إضافة موظف جديد
+          إضافة موظف جديد (حفظ فوري)
         </h3>
-        <form id="employeeForm" onsubmit="saveEmployee(event)" class="space-y-3.5 text-sm">
+        <form id="employeeForm" onsubmit="saveEmployeeToCloud(event)" class="space-y-3.5 text-sm">
           <input type="hidden" id="editIndex" value="-1" />
 
           <div>
@@ -354,8 +365,8 @@
           </div>
 
           <div class="flex gap-2 pt-2">
-            <button type="submit" class="flex-1 bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold py-3 rounded-xl transition cursor-pointer">
-              حفظ بيانات الموظف
+            <button id="saveEmpBtn" type="submit" class="flex-1 bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold py-3 rounded-xl transition cursor-pointer">
+              حفظ في الموقع فوراً
             </button>
             <button type="button" onclick="resetEmployeeForm()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl transition cursor-pointer">
               إلغاء
@@ -364,17 +375,18 @@
         </form>
       </div>
 
+      <!-- قائمة الموظفين + استيراد Excel + تغيير الرمز السري -->
       <div class="lg:col-span-2 space-y-6">
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
           <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
             <div>
-              <h3 class="text-base font-black text-[#0b3d28]">استيراد كشف Excel دفعة واحدة أو حفظ البيانات</h3>
-              <p class="text-xs text-slate-500">يمكنك رفع ملف Excel يحتوي على الموظفين أو تحميل قالب جاهز للتعبئة.</p>
+              <h3 class="text-base font-black text-[#0b3d28]">قائمة الموظفين واستيراد ملفات Excel</h3>
+              <p class="text-xs text-slate-500">أي موظف تضيفه أو تعدله هنا يظهر فوراً لجميع الزوار على هواتفهم دون الرجوع إلى GitHub.</p>
             </div>
             <div class="flex flex-wrap gap-2">
               <label class="bg-[#0b6b43] hover:bg-[#085233] text-white text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer transition">
-                <span>رفع ملف Excel / CSV</span>
-                <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcelFile(event)" class="hidden" />
+                <span>📥 استيراد ملف Excel / CSV</span>
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcelFileToCloud(event)" class="hidden" />
               </label>
               <button onclick="downloadExcelTemplate()" class="bg-[#eaf4ee] hover:bg-[#d8ece0] text-[#0b6b43] text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer">
                 تحميل قالب Excel فارغ
@@ -409,41 +421,23 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
-            <h3 class="text-base font-black text-[#0b3d28] mb-1">تغيير الرمز السري للمسؤول</h3>
-            <p class="text-xs text-slate-500 mb-4">الرمز الافتراضي الحالي هو <code class="font-bold text-[#0b6b43]">2026</code> ويمكنك تغييره من هنا:</p>
-            <form onsubmit="changeAdminPin(event)" class="space-y-3 text-xs">
-              <input id="currentPinInput" type="password" required placeholder="أدخل الرمز السري الحالي" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none" />
-              <input id="newPinInput" type="password" required placeholder="أدخل الرمز السري الجديد" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none" />
-              <button type="submit" class="w-full bg-[#0b3d28] hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">
-                حفظ الرمز السري الجديد
-              </button>
-            </form>
-          </div>
-
-          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between">
-            <div>
-              <h3 class="text-base font-black text-[#0b3d28] mb-1">نشر التعديلات لجميع الهواتف (GitHub)</h3>
-              <p class="text-xs text-slate-500 leading-relaxed mb-4">
-                التعديلات تُحفظ فوراً على جهازك، ولتظهر لجميع الموظفين الذين يفتحون رابط GitHub من هواتفهم، اضغط أدناه لنسخ الكود المحدّث أو تحميله:
-              </p>
-            </div>
-            <div class="space-y-2">
-              <button onclick="copyUpdatedHtmlToClipboard()" class="w-full bg-[#0b3d28] hover:bg-slate-800 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">
-                نسخ الكود المحدّث بالكامل للحافظة (للصقه في GitHub)
-              </button>
-              <button onclick="exportUpdatedSiteHtml()" class="w-full bg-[#0b6b43] hover:bg-[#085233] text-white font-extrabold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">
-                تحميل ملف الموقع المحدّث (index.html)
-              </button>
-            </div>
-          </div>
+        <!-- تغيير الرمز السري للمسؤول -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+          <h3 class="text-base font-black text-[#0b3d28] mb-1">تغيير الرمز السري للمسؤول (حفظ سحابي مباشر)</h3>
+          <p class="text-xs text-slate-500 mb-4">الرمز السري الافتراضي هو <code class="font-bold text-[#0b6b43]">2026</code> ويمكنك تغييره من هنا ليُحفظ في الموقع فوراً:</p>
+          <form onsubmit="changeAdminPinInCloud(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <input id="currentPinInput" type="password" required placeholder="أدخل الرمز السري الحالي" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none" />
+            <input id="newPinInput" type="password" required placeholder="أدخل الرمز السري الجديد" class="w-full bg-[#f8faf9] border border-slate-300 rounded-xl px-3.5 py-2.5 outline-none" />
+            <button type="submit" class="w-full bg-[#0b3d28] hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">
+              تحديث الرمز السري فوراً
+            </button>
+          </form>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 4. نافذة الرمز السري -->
+  <!-- ==================== 4. نافذة الرمز السري للمسؤول ==================== -->
   <div id="admin-login-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 no-print">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-xl border border-slate-200 text-center">
       <div class="w-12 h-12 rounded-2xl bg-[#eaf4ee] text-[#0b6b43] flex items-center justify-center mx-auto mb-3">
@@ -452,13 +446,13 @@
         </svg>
       </div>
       <h3 class="text-lg font-black text-[#0b3d28] mb-1">دخول المسؤول</h3>
-      <p class="text-xs text-slate-500 mb-4">أدخل الرمز السري لإضافة وتعديل بيانات الموظفين</p>
+      <p class="text-xs text-slate-500 mb-4">أدخل الرمز السري لإضافة وتعديل بيانات الموظفين مباشرة</p>
       
       <form onsubmit="verifyAdminPin(event)" class="space-y-3">
         <input 
           id="adminPinField" 
           type="password" 
-          placeholder="الرمز السري (الافتراضي: 2026)" 
+          placeholder="أدخل الرمز السري" 
           class="w-full bg-[#f8faf9] border border-slate-300 focus:border-[#0b6b43] rounded-xl px-4 py-3 text-center font-bold outline-none"
         />
         <p id="pinErrorMsg" class="hidden text-xs text-red-600 font-bold">الرمز السري غير صحيح!</p>
@@ -474,7 +468,7 @@
     </div>
   </div>
 
-  <!-- 5. التذييل -->
+  <!-- ==================== 5. التذييل ==================== -->
   <footer class="border-t border-slate-200/80 bg-white py-5 text-center text-xs text-slate-400 no-print mt-8">
     <p class="font-semibold text-slate-500 mb-1">
       مراقبة التربية والتعليم بلدية خليج السدرة · خدمات شؤون الموظفين
@@ -482,88 +476,161 @@
     <p>الاستعلام عن فروقات القانون 4</p>
   </footer>
 
-  <!-- 6. البيانات المدمجة -->
-  <script id="embedded-data-script">
-    let EMBEDDED_ADMIN_PIN = "2026";
-    let EMBEDDED_LOGO_DATA = "";
-    let EMBEDDED_EMPLOYEES = [
-      {
-        name: "سالم عبد القادر محمد الزروق",
-        nid: "119850123456",
-        school: "مدرسة خليج السدرة الثانوية",
-        grade: "الدرجة العاشرة",
-        fin: "88412",
-        period: "فروقات القانون رقم (4) لسنة 2018",
-        months: 25,
-        monthlyDiff: 425.500,
-        total: 10637.500,
-        status: "معتمد ومسجل",
-        notes: ""
-      },
-      {
-        name: "فاطمة مفتاح علي العبيدي",
-        nid: "219900654321",
-        school: "مدرسة بن جواد المركزية للتعليم الأساسي",
-        grade: "الدرجة الثامنة",
-        fin: "99201",
-        period: "فروقات القانون رقم (4) لسنة 2018",
-        months: 20,
-        monthlyDiff: 380.250,
-        total: 7605.000,
-        status: "قيد المراجعة والتدقيق",
-        notes: "يرجى مراجعة قسم الشؤون الإدارية والمالية لاستكمال المطابقة."
-      }
-    ];
-  </script>
-
+  <!-- ==================== 6. محرك قاعدة البيانات السحابية الفورية ==================== -->
   <script>
-    const STORAGE_KEY_EMP = "sidra_law4_employees_v1";
-    const STORAGE_KEY_PIN = "sidra_law4_admin_pin_v1";
-    const STORAGE_KEY_LOGO = "sidra_law4_logo_v1";
+    // رابط قاعدة البيانات السحابية المخصصة لبوابة خليج السدرة (منفصلة تماماً وتعمل تلقائياً)
+    const CLOUD_DB_URL = "https://alsumoud-a9ec2-default-rtdb.firebaseio.com/sidra_law4_portal.json";
+    const LOCAL_CACHE_KEY = "sidra_law4_cloud_cache_v2";
 
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedLogo = localStorage.getItem(STORAGE_KEY_LOGO) || EMBEDDED_LOGO_DATA;
-      if (savedLogo) applyLogoData(savedLogo);
-    });
+    let portalState = {
+      adminPin: "2026",
+      logoData: "",
+      employees: [
+        {
+          name: "سالم عبد القادر محمد الزروق",
+          nid: "119850123456",
+          school: "مدرسة خليج السدرة الثانوية",
+          grade: "الدرجة العاشرة",
+          fin: "88412",
+          period: "فروقات القانون رقم (4) لسنة 2018",
+          months: 25,
+          monthlyDiff: 425.500,
+          total: 10637.500,
+          status: "معتمد ومسجل",
+          notes: ""
+        },
+        {
+          name: "فاطمة مفتاح علي العبيدي",
+          nid: "219900654321",
+          school: "مدرسة بن جواد المركزية للتعليم الأساسي",
+          grade: "الدرجة الثامنة",
+          fin: "99201",
+          period: "فروقات القانون رقم (4) لسنة 2018",
+          months: 20,
+          monthlyDiff: 380.250,
+          total: 7605.000,
+          status: "قيد المراجعة والتدقيق",
+          notes: "يرجى مراجعة قسم الشؤون الإدارية والمالية لاستكمال المطابقة."
+        }
+      ]
+    };
 
-    function applyLogoData(dataUrl) {
-      const hImg = document.getElementById('headerLogoImg');
-      const pImg = document.getElementById('printLogoImg');
-      const fb = document.getElementById('fallback-logo');
-      if (hImg) { hImg.src = dataUrl; hImg.style.display = 'block'; }
-      if (pImg) { pImg.src = dataUrl; pImg.style.display = 'block'; }
-      if (fb) { fb.style.display = 'none'; }
+    // جلب أحدث البيانات من السحابة فور فتح الموقع
+    async function loadFromCloud() {
+      const cached = localStorage.getItem(LOCAL_CACHE_KEY);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.adminPin) portalState = parsed;
+          applyLogoToUI(portalState.logoData);
+        } catch (e) {}
+      }
+
+      try {
+        const res = await fetch(CLOUD_DB_URL + "?t=" + Date.now(), { cache: "no-store" });
+        if (res.ok) {
+          const cloudData = await res.json();
+          if (cloudData && cloudData.adminPin) {
+            portalState = {
+              adminPin: String(cloudData.adminPin || "2026"),
+              logoData: cloudData.logoData || "",
+              employees: Array.isArray(cloudData.employees) ? cloudData.employees : []
+            };
+            localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(portalState));
+            applyLogoToUI(portalState.logoData);
+          } else {
+            // تهيئة السحابة لأول مرة إذا كانت فارغة
+            await syncToCloud();
+          }
+        }
+      } catch (err) {
+        console.warn("Using local cache fallback");
+      }
     }
 
-    function uploadLogoFromPhone(event) {
+    // حفظ أي تعديل يقوم به المسؤول في السحابة فوراً ليظهر لجميع الهواتف
+    async function syncToCloud() {
+      const indicator = document.getElementById('cloudSyncIndicator');
+      if (indicator) {
+        indicator.textContent = "⏳ جارٍ الحفظ السحابي...";
+        indicator.className = "text-xs font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full";
+      }
+
+      localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(portalState));
+
+      try {
+        const res = await fetch(CLOUD_DB_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(portalState)
+        });
+        if (res.ok && indicator) {
+          indicator.textContent = "✅ تم الحفظ السحابي الفوري لجميع الهواتف";
+          indicator.className = "text-xs font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full";
+        }
+      } catch (err) {
+        if (indicator) {
+          indicator.textContent = "⚠️ حُفظ محلياً (تحقق من اتصال الإنترنت)";
+          indicator.className = "text-xs font-extrabold text-red-700 bg-red-50 border border-red-200 px-3 py-1 rounded-full";
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadFromCloud);
+
+    // ميزة فتح لوحة المسؤول بالضغط 3 مرات على الشعار أيضاً
+    let logoTapCount = 0;
+    let logoTapTimer = null;
+    function handleLogoSecretTap() {
+      logoTapCount++;
+      clearTimeout(logoTapTimer);
+      if (logoTapCount >= 3) {
+        logoTapCount = 0;
+        openAdminModal();
+      } else {
+        logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 900);
+      }
+    }
+
+    function applyLogoToUI(dataUrl) {
+      const hImg = document.getElementById('headerLogoImg');
+      const pImg = document.getElementById('printLogoImg');
+      const defSvg = document.getElementById('defaultVectorLogo');
+      if (dataUrl && dataUrl.startsWith('data:image')) {
+        if (hImg) { hImg.src = dataUrl; hImg.classList.remove('hidden'); }
+        if (pImg) { pImg.src = dataUrl; pImg.classList.remove('hidden'); }
+        if (defSvg) { defSvg.classList.add('hidden'); }
+      }
+    }
+
+    // ضغط ورفع صورة الشعار من ألبوم الهاتف مباشرة إلى السحابة
+    function uploadLogoToCloud(event) {
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        EMBEDDED_LOGO_DATA = dataUrl;
-        localStorage.setItem(STORAGE_KEY_LOGO, dataUrl);
-        applyLogoData(dataUrl);
-        alert("تم تحديث شعار المراقبة بنجاح!");
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 260;
+          let w = img.width;
+          let h = img.height;
+          if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressedDataUrl = canvas.toDataURL('image/png', 0.85);
+
+          portalState.logoData = compressedDataUrl;
+          applyLogoToUI(compressedDataUrl);
+          await syncToCloud();
+          alert("تم رفع وحفظ شعار المراقبة سحابياً بنجاح! سيظهر الآن لجميع الزوار.");
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
-    }
-
-    function getEmployees() {
-      const saved = localStorage.getItem(STORAGE_KEY_EMP);
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
-      }
-      return EMBEDDED_EMPLOYEES;
-    }
-
-    function saveEmployeesData(list) {
-      EMBEDDED_EMPLOYEES = list;
-      localStorage.setItem(STORAGE_KEY_EMP, JSON.stringify(list));
-    }
-
-    function getAdminPin() {
-      return localStorage.getItem(STORAGE_KEY_PIN) || EMBEDDED_ADMIN_PIN;
     }
 
     function normalizeDigits(str) {
@@ -589,7 +656,7 @@
       document.getElementById('searchMessage').classList.add('hidden');
     }
 
-    function handleEmployeeSearch(e) {
+    async function handleEmployeeSearch(e) {
       e.preventDefault();
       const nid = normalizeDigits(document.getElementById('nationalIdInput').value);
       const card = document.getElementById('statement-card');
@@ -600,7 +667,12 @@
         return;
       }
 
-      const list = getEmployees();
+      const btnText = document.getElementById('searchBtnText');
+      btnText.textContent = "جارٍ البحث في السجلات...";
+      await loadFromCloud();
+      btnText.textContent = "بحث عن المستحقات";
+
+      const list = portalState.employees || [];
       const found = list.find(emp => normalizeDigits(emp.nid) === nid);
 
       if (!found) {
@@ -655,6 +727,7 @@
       msgBox.classList.remove('hidden');
     }
 
+    // ==================== وظائف لوحة المسؤول السحابية ====================
     function openAdminModal() {
       document.getElementById('adminPinField').value = "";
       document.getElementById('pinErrorMsg').classList.add('hidden');
@@ -666,10 +739,11 @@
       document.getElementById('admin-login-modal').classList.add('hidden');
     }
 
-    function verifyAdminPin(e) {
+    async function verifyAdminPin(e) {
       e.preventDefault();
+      await loadFromCloud();
       const entered = document.getElementById('adminPinField').value.trim();
-      if (entered === getAdminPin()) {
+      if (entered === String(portalState.adminPin || "2026")) {
         closeAdminModal();
         document.getElementById('public-view').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
@@ -690,7 +764,7 @@
       document.getElementById('calcTotalPreview').textContent = formatLYD(m * diff);
     }
 
-    function saveEmployee(e) {
+    async function saveEmployeeToCloud(e) {
       e.preventDefault();
       const nid = normalizeDigits(document.getElementById('empNid').value);
       if (nid.length !== 12) {
@@ -717,36 +791,39 @@
         notes: document.getElementById('empNotes').value.trim()
       };
 
-      const list = getEmployees();
+      if (!Array.isArray(portalState.employees)) portalState.employees = [];
       const editIdx = Number(document.getElementById('editIndex').value);
 
       if (editIdx >= 0) {
-        list[editIdx] = empObj;
+        portalState.employees[editIdx] = empObj;
       } else {
-        const existingIdx = list.findIndex(item => item.nid === nid);
+        const existingIdx = portalState.employees.findIndex(item => item.nid === nid);
         if (existingIdx >= 0) {
-          if (!confirm("هذا الرقم الوطني موجود مسبقاً. هل تريد تحديث بياناته؟")) return;
-          list[existingIdx] = empObj;
+          if (!confirm("هذا الرقم الوطني مسجل مسبقاً. هل تريد تحديث بياناته؟")) return;
+          portalState.employees[existingIdx] = empObj;
         } else {
-          list.unshift(empObj);
+          portalState.employees.unshift(empObj);
         }
       }
 
-      saveEmployeesData(list);
+      const btn = document.getElementById('saveEmpBtn');
+      btn.textContent = "جارٍ الحفظ السحابي...";
+      await syncToCloud();
+      btn.textContent = "حفظ في الموقع فوراً";
+
       resetEmployeeForm();
       renderAdminTable();
-      alert("تم حفظ بيانات الموظف بنجاح!");
     }
 
     function resetEmployeeForm() {
       document.getElementById('employeeForm').reset();
       document.getElementById('editIndex').value = "-1";
-      document.getElementById('formTitle').textContent = "إضافة موظف جديد";
+      document.getElementById('formTitle').textContent = "إضافة موظف جديد (حفظ فوري)";
       document.getElementById('calcTotalPreview').textContent = "0.000 دينار ليبي";
     }
 
     function editEmployee(index) {
-      const emp = getEmployees()[index];
+      const emp = portalState.employees[index];
       if (!emp) return;
       document.getElementById('editIndex').value = index;
       document.getElementById('formTitle').textContent = "تعديل بيانات الموظف";
@@ -765,16 +842,16 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function deleteEmployee(index) {
-      const list = getEmployees();
-      if (!confirm(`هل أنت متأكد من حذف سجل الموظف: ${list[index].name}؟`)) return;
-      list.splice(index, 1);
-      saveEmployeesData(list);
+    async function deleteEmployee(index) {
+      const emp = portalState.employees[index];
+      if (!confirm(`هل أنت متأكد من حذف سجل الموظف: ${emp.name}؟`)) return;
+      portalState.employees.splice(index, 1);
+      await syncToCloud();
       renderAdminTable();
     }
 
     function renderAdminTable() {
-      const list = getEmployees();
+      const list = portalState.employees || [];
       const query = (document.getElementById('adminSearchInput').value || "").trim();
       const tbody = document.getElementById('adminEmployeesTable');
       document.getElementById('totalEmployeesBadge').textContent = `الإجمالي: ${list.length} موظف`;
@@ -802,12 +879,12 @@
       `).join('');
     }
 
-    function changeAdminPin(e) {
+    async function changeAdminPinInCloud(e) {
       e.preventDefault();
       const curr = document.getElementById('currentPinInput').value.trim();
       const next = document.getElementById('newPinInput').value.trim();
 
-      if (curr !== getAdminPin()) {
+      if (curr !== String(portalState.adminPin || "2026")) {
         alert("الرمز السري الحالي غير صحيح!");
         return;
       }
@@ -816,25 +893,25 @@
         return;
       }
 
-      EMBEDDED_ADMIN_PIN = next;
-      localStorage.setItem(STORAGE_KEY_PIN, next);
+      portalState.adminPin = next;
+      await syncToCloud();
       document.getElementById('currentPinInput').value = "";
       document.getElementById('newPinInput').value = "";
-      alert("تم تغيير الرمز السري للمسؤول بنجاح!");
+      alert("تم تحديث الرمز السري للمسؤول وحفظه في الموقع بنجاح!");
     }
 
-    function importExcelFile(event) {
+    function importExcelFileToCloud(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(firstSheet);
 
-        const list = getEmployees();
+        if (!Array.isArray(portalState.employees)) portalState.employees = [];
         let added = 0;
 
         rows.forEach(row => {
@@ -859,16 +936,16 @@
               notes: String(row['ملاحظات'] || '')
             };
 
-            const existingIdx = list.findIndex(item => item.nid === nid);
-            if (existingIdx >= 0) list[existingIdx] = empObj;
-            else list.push(empObj);
+            const existingIdx = portalState.employees.findIndex(item => item.nid === nid);
+            if (existingIdx >= 0) portalState.employees[existingIdx] = empObj;
+            else portalState.employees.push(empObj);
             added++;
           }
         });
 
-        saveEmployeesData(list);
+        await syncToCloud();
         renderAdminTable();
-        alert(`تم استيراد وتحديث ${added} موظف بنجاح!`);
+        alert(`تم استيراد وحفظ ${added} موظف سحابياً بنجاح!`);
       };
       reader.readAsArrayBuffer(file);
     }
@@ -892,41 +969,6 @@
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "كشف الفروقات");
       XLSX.writeFile(wb, "قالب_فروقات_خليج_السدرة.xlsx");
-    }
-
-    function buildUpdatedHtmlString() {
-      const currentList = getEmployees();
-      const currentPin = getAdminPin();
-      const currentLogo = localStorage.getItem(STORAGE_KEY_LOGO) || EMBEDDED_LOGO_DATA || "";
-
-      const scriptContent = `\n    let EMBEDDED_ADMIN_PIN = ${JSON.stringify(currentPin)};\n    let EMBEDDED_LOGO_DATA = ${JSON.stringify(currentLogo)};\n    let EMBEDDED_EMPLOYEES = ${JSON.stringify(currentList, null, 2)};\n  `;
-      const docClone = document.documentElement.cloneNode(true);
-      const embeddedScript = docClone.querySelector('#embedded-data-script');
-      embeddedScript.textContent = scriptContent;
-
-      docClone.querySelector('#admin-panel').classList.add('hidden');
-      docClone.querySelector('#public-view').classList.remove('hidden');
-      docClone.querySelector('#statement-card').classList.add('hidden');
-
-      return "<!DOCTYPE html>\n" + docClone.outerHTML;
-    }
-
-    function copyUpdatedHtmlToClipboard() {
-      const finalHtml = buildUpdatedHtmlString();
-      navigator.clipboard.writeText(finalHtml).then(() => {
-        alert("تم نسخ كود الموقع المحدّث بالكامل! يمكنك الآن لصقه مباشرة في ملف index.html داخل GitHub.");
-      });
-    }
-
-    function exportUpdatedSiteHtml() {
-      const finalHtml = buildUpdatedHtmlString();
-      const blob = new Blob([finalHtml], { type: "text/html;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "index.html";
-      a.click();
-      URL.revokeObjectURL(url);
     }
   </script>
 </body>
